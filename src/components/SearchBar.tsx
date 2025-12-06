@@ -10,7 +10,6 @@ export default function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null);
   const { setSearchLocation } = useAppStore();
 
-  // Mock location suggestions
   const mockLocations = [
     'Los Angeles, CA',
     'San Francisco, CA',
@@ -33,7 +32,8 @@ export default function SearchBar() {
       setSuggestions([]);
       setShowSuggestions(false);
     }
-  }, [query, mockLocations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const handleSearch = (location: string) => {
     setQuery(location);

@@ -93,7 +93,7 @@ const mockRecentSales: RecentSale[] = [
   },
 ];
 
-export default function AgentDetailPage({ agentId }: AgentDetailPageProps) {
+export default function AgentDetailPage() {
   const [agent] = useState<Agent>(mockAgent);
   const [reviews] = useState<Review[]>(mockReviews);
   const [recentSales] = useState<RecentSale[]>(mockRecentSales);
