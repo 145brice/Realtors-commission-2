@@ -6,10 +6,6 @@ import Link from 'next/link';
 import { Agent, Review, RecentSale } from '@/types';
 import { formatCommission, formatPhoneNumber, formatCurrency, getInitials } from '@/lib/utils';
 
-interface AgentDetailPageProps {
-  agentId?: string;
-}
-
 // Mock data - replace with actual API calls
 const mockAgent: Agent = {
   id: '1',
