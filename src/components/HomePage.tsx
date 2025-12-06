@@ -59,15 +59,20 @@ const mockAgents: Agent[] = [
 ];
 
 export default function HomePage() {
-  const { setAgents, setFilteredAgents, isMapView } = useAppStore();
+  const { agents, setAgents, setFilteredAgents, isMapView } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Initialize with mock data
-    setAgents(mockAgents);
-    setFilteredAgents(mockAgents);
-  }, [setAgents, setFilteredAgents]);
+  }, []);
+
+  // Initialize agents on mount only
+  useEffect(() => {
+    if (mounted && agents.length === 0) {
+      setAgents(mockAgents);
+      setFilteredAgents(mockAgents);
+    }
+  }, [mounted, agents.length, setAgents, setFilteredAgents]);
 
   if (!mounted) {
     return null;

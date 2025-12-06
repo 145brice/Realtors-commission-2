@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Agent, Review, RecentSale } from '@/types';
 import { formatCommission, formatPhoneNumber, formatCurrency, getInitials } from '@/lib/utils';
 
 interface AgentDetailPageProps {
-  agentId: string;
+  agentId?: string;
 }
 
 // Mock data - replace with actual API calls

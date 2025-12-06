@@ -33,7 +33,7 @@ export default function SearchBar() {
       setSuggestions([]);
       setShowSuggestions(false);
     }
-  }, [query]);
+  }, [query, mockLocations]);
 
   const handleSearch = (location: string) => {
     setQuery(location);

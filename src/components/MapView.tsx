@@ -8,7 +8,8 @@ import { Agent } from '@/types';
 import { formatCommission } from '@/lib/utils';
 
 // Fix for default marker icons in Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+const IconDefault = L.Icon.Default as unknown as { prototype: { _getIconUrl?: () => void } };
+delete IconDefault.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
