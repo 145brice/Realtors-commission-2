@@ -1,43 +1,29 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { useAppStore } from '@/store/appStore';
 import { Agent } from '@/types';
 import { formatCommission } from '@/lib/utils';
 
-// Fix for default marker icons in Leaflet
-interface IconDefaultPrototype {
-  _getIconUrl?: () => void;
-}
-
-interface IconDefaultClass {
-  prototype: IconDefaultPrototype;
-}
-
-const IconDefault = L.Icon.Default as unknown as IconDefaultClass;
-delete IconDefault.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-});
-
 export default function MapView() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
   const { filteredAgents, selectedAgent, setSelectedAgent, searchLocation } = useAppStore();
   const [mounted, setMounted] = useState(false);
+  const [L, setL] = useState<any>(null);
 
+  // Load Leaflet only on client side
   useEffect(() => {
-    setMounted(true);
+    import('leaflet').then((leaflet) => {
+      setL(leaflet.default);
+      setMounted(true);
+    });
   }, []);
 
   // Initialize map
   useEffect(() => {
-    if (!mounted || !mapRef.current || mapInstanceRef.current) return;
+    if (!mounted || !mapRef.current || mapInstanceRef.current || !L) return;
 
     const defaultLat = searchLocation?.latitude || 34.0522;
     const defaultLng = searchLocation?.longitude || -118.2437;
@@ -55,11 +41,11 @@ export default function MapView() {
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, [mounted, searchLocation]);
+  }, [mounted, searchLocation, L]);
 
   // Update markers when agents change
   useEffect(() => {
-    if (!mapInstanceRef.current || !mounted) return;
+    if (!mapInstanceRef.current || !mounted || !L) return;
 
     // Clear existing markers
     markersRef.current.forEach((marker) => marker.remove());
@@ -115,16 +101,16 @@ export default function MapView() {
       );
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
     }
-  }, [filteredAgents, selectedAgent, setSelectedAgent, mounted]);
+  }, [filteredAgents, selectedAgent, setSelectedAgent, mounted, L]);
 
   // Pan to selected agent
   useEffect(() => {
-    if (selectedAgent && mapInstanceRef.current && mounted) {
+    if (selectedAgent && mapInstanceRef.current && mounted && L) {
       mapInstanceRef.current.setView([selectedAgent.latitude, selectedAgent.longitude], 14, {
         animate: true,
       });
     }
-  }, [selectedAgent, mounted]);
+  }, [selectedAgent, mounted, L]);
 
   if (!mounted) {
     return (

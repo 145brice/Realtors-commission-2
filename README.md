@@ -1,6 +1,6 @@
 # Agent Finder - Real Estate Agent Search Platform
 
-A modern, production-ready web application that mimics Zillow's layout for finding and comparing real estate agents by commission rate. Built with Next.js 14, TypeScript, and Supabase.
+A modern, production-ready web application that mimics Zillow's layout for finding and comparing real estate agents by commission rate. Built with Next.js 15, TypeScript, and Supabase.
 
 ![Agent Finder](https://img.shields.io/badge/Next.js-15-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)
 
