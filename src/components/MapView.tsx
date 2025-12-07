@@ -1,22 +1,31 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type {
+  Map as LeafletMap,
+  Marker as LeafletMarker,
+  DivIcon,
+  LatLngExpression,
+} from 'leaflet';
+import * as leafletTypes from 'leaflet';
 import { useAppStore } from '@/store/appStore';
 import { Agent } from '@/types';
 import { formatCommission } from '@/lib/utils';
 
+type LeafletModule = typeof leafletTypes;
+
 export default function MapView() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const markersRef = useRef<LeafletMarker[]>([]);
   const { filteredAgents, selectedAgent, setSelectedAgent, searchLocation } = useAppStore();
   const [mounted, setMounted] = useState(false);
-  const [L, setL] = useState<any>(null);
+  const [L, setL] = useState<LeafletModule | null>(null);
 
   // Load Leaflet only on client side
   useEffect(() => {
-    import('leaflet').then((leaflet) => {
-      setL(leaflet.default);
+    import('leaflet').then((leaflet: LeafletModule) => {
+      setL(leaflet);
       setMounted(true);
     });
   }, []);
@@ -28,7 +37,7 @@ export default function MapView() {
     const defaultLat = searchLocation?.latitude || 34.0522;
     const defaultLng = searchLocation?.longitude || -118.2437;
 
-    const map = L.map(mapRef.current).setView([defaultLat, defaultLng], 12);
+    const map = L.map(mapRef.current).setView([defaultLat, defaultLng] as LatLngExpression, 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -53,7 +62,7 @@ export default function MapView() {
 
     // Add new markers
     filteredAgents.forEach((agent: Agent) => {
-      const customIcon = L.divIcon({
+      const customIcon: DivIcon = L.divIcon({
         className: 'custom-marker',
         html: `
           <div class="flex items-center justify-center w-10 h-10 bg-primary-600 text-white rounded-full border-2 border-white shadow-lg text-xs font-bold cursor-pointer hover:scale-110 transition-transform ${
@@ -66,7 +75,7 @@ export default function MapView() {
         iconAnchor: [20, 40],
       });
 
-      const marker = L.marker([agent.latitude, agent.longitude], { icon: customIcon })
+      const marker = L.marker([agent.latitude, agent.longitude] as LatLngExpression, { icon: customIcon })
         .addTo(mapInstanceRef.current!)
         .on('click', () => {
           setSelectedAgent(agent);
@@ -96,9 +105,10 @@ export default function MapView() {
 
     // Fit bounds to show all markers
     if (filteredAgents.length > 0) {
-      const bounds = L.latLngBounds(
-        filteredAgents.map((agent: Agent) => [agent.latitude, agent.longitude])
+      const coords = filteredAgents.map(
+        (agent: Agent) => [agent.latitude, agent.longitude] as LatLngExpression
       );
+      const bounds = L.latLngBounds(coords);
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
     }
   }, [filteredAgents, selectedAgent, setSelectedAgent, mounted, L]);
