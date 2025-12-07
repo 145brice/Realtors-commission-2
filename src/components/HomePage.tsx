@@ -5,6 +5,7 @@ import SearchBar from './SearchBar';
 import Filters from './Filters';
 import AgentList from './AgentList';
 import MapView from './MapView';
+import AuthModal from './AuthModal';
 import { useAppStore } from '@/store/appStore';
 import { Agent } from '@/types';
 
@@ -61,6 +62,7 @@ const mockAgents: Agent[] = [
 export default function HomePage() {
   const { agents, setAgents, setFilteredAgents, isMapView } = useAppStore();
   const [mounted, setMounted] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -85,7 +87,9 @@ export default function HomePage() {
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-2xl font-bold text-primary-600">AgentFinder</h1>
-            <button className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">
+            <button 
+              onClick={() => setAuthModalOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">
               Sign In
             </button>
           </div>
@@ -108,6 +112,9 @@ export default function HomePage() {
           </div>
         )}
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 }
