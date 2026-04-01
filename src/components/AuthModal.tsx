@@ -17,10 +17,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
+  // Check if Supabase is configured
+  const isSupabaseConfigured = !!supabase;
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setMessage('');
+    
+    if (!isSupabaseConfigured || !supabase) {
+      setError('Supabase is not configured. Please add your credentials to .env.local');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -50,6 +59,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     e.preventDefault();
     setError('');
     setMessage('');
+
+    if (!isSupabaseConfigured || !supabase) {
+      setError('Supabase is not configured. Please add your credentials to .env.local');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
